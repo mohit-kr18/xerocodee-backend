@@ -1,13 +1,14 @@
 import JWT from 'jsonwebtoken';
 import createError from 'http-errors';
-
+import dotenv from "dotenv";
+dotenv.config();
 
 export const signAccessToken = (userId) => {
     return new Promise((resolve, reject) => {
         const payload = {};
         const secret = process.env.ACCESS_TOKEN_SECRET;
         const options = {
-            expiresIn : '1h',
+            expiresIn : '30d',
             audience: userId
         }
         JWT.sign(payload, secret, options, (err, token) => {
@@ -21,6 +22,7 @@ export const signAccessToken = (userId) => {
 }
 
 export const verifyAccessToken = (req,res,next) => {
+    console.log(req.headers['authorization']);
     if (!req.headers['authorization']) return next(createError.Unauthorized());
     const authHeader = req.headers['authorization'];
     const bearerToken = authHeader.split(' ');
